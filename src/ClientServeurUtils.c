@@ -54,6 +54,8 @@ bool init_client_para(int* socket_client_para,sockaddr_in* server_address_para){
     server_address_para->sin_family = AF_INET;
     server_address_para->sin_port = htons(SERVER_TCP_PORT);
     server_address_para->sin_addr.s_addr = inet_addr(SERVER_IP);
+    printf("Successfully created and initialized socket for para server\n");
+
     return true;
 }
 bool init_client_vehicule(int *sock_client_vehicule, sockaddr_in *server_address_vehicule,hostent* vehicule_host){
@@ -74,6 +76,7 @@ bool init_client_vehicule(int *sock_client_vehicule, sockaddr_in *server_address
     server_address_vehicule->sin_port = htons(SERVER_UDP_PORT);
     memset(&server_address_vehicule->sin_zero,0,8);      
     server_address_vehicule->sin_addr.s_addr = inet_addr(SERVER_IP);
+    printf("Successfully created and initialized socket for vehicule server\n");
     return true;
 }
 //establish client proxy connection
@@ -137,7 +140,7 @@ int run_proxy_server(int* dialogue_socket,int* sock_client_para,int* sock_client
                                 if(counts != 1) 
                                     fprintf(stderr, "An error has occured while sending data!\n\n"); 
                                 else 
-                                    printf("Message: %c sent successfully (%zd octets)\n\n", Buffer, counts); 
+                                    printf("Message: %d sent successfully (%zd octets)\n\n", Buffer, counts); 
                         } 
                         break;
                     case RECETTE_GLOBALE_CODE:

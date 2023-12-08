@@ -8,19 +8,19 @@
 #define SERVER_IP "127.0.0.1"
 #define SERVER_PORT 8080
 int main(int argc, char *argv[]) {
-    int sclient; 
+    int client_socket; 
     int8_t input;
-    struct sockaddr_in saddr = {0}; 
-    sclient = socket(AF_INET,SOCK_STREAM,0);
-    if(sclient < 0){
+    struct sockaddr_in server_address = {0}; 
+    client_socket = socket(AF_INET,SOCK_STREAM,0);
+    if(client_socket < 0){
         perror("Failed to create client socket");
         return -1;
     }
     printf("Created client socket\n");
-    saddr.sin_family = AF_INET;
-    saddr.sin_port = htons(SERVER_PORT);
-    saddr.sin_addr.s_addr = inet_addr(SERVER_IP);
-    while (connect(sclient,(struct sockaddr *)&saddr,sizeof(saddr)) == -1) sleep(1);
+    server_address.sin_family = AF_INET;
+    server_address.sin_port = htons(SERVER_PORT);
+    server_address.sin_addr.s_addr = inet_addr(SERVER_IP);
+    while (connect(client_socket,(struct sockaddr *)&server_address,sizeof(server_address)) == -1) sleep(1);
     printf("Connected to http server\n");
     printf("==============================\n");
     while (1){
@@ -36,12 +36,12 @@ int main(int argc, char *argv[]) {
             printf("non valid character\n");
         else if(input == 0){
             printf("shutting down client");
-            shutdown(sclient,SHUT_RDWR);
-            close(sclient);
+            shutdown(client_socket,SHUT_RDWR);
+            close(client_socket);
             return 0;
         }
         else{
-            send(sclient,&input,sizeof(int8_t),0);
+            send(client_socket,&input,sizeof(int8_t),0);
         }
         printf("================================\n");
     }

@@ -21,6 +21,10 @@ int  main(int argc, char* argv[])
     int  sock_client_para;
     sockaddr_in server_address_para;     
 
+    //variables used to establish proxy to server_vehicule(UDP) connection
+    int  sock_client_vehicule;
+    sockaddr_in server_address_vehicule;     
+    hostent vehicule_host;  
     //variables globally used
     socklen_t address_size = sizeof(sockaddr_in); 
 
@@ -34,22 +38,27 @@ int  main(int argc, char* argv[])
         shutdown_proxy_server(sockets_to_shutdown,2);
         exit(-2);
     }
-
-    if(!connect_client(&sockfd,&dialogue_socket,(sockaddr*)&client_addr,&address_size)){
-        int sockets_to_shutdown[] = {sockfd,dialogue_socket,sock_client_para};
+    if(!init_client_vehicule(&sock_client_vehicule,&server_address_vehicule,&vehicule_host)){
+        int sockets_to_shutdown[] = {sockfd,sock_client_para,sock_client_vehicule};
         shutdown_proxy_server(sockets_to_shutdown,3);
         exit(-3);
     }
-    if(!connect_para_server(&sock_client_para,&server_address_para)){
-        int sockets_to_shutdown[] = {sockfd,dialogue_socket,sock_client_para};
-        shutdown_proxy_server(sockets_to_shutdown,3);
+
+    if(!connect_client(&sockfd,&dialogue_socket,(sockaddr*)&client_addr,&address_size)){
+        int sockets_to_shutdown[] = {sockfd,dialogue_socket,sock_client_para,sock_client_vehicule};
+        shutdown_proxy_server(sockets_to_shutdown,4);
         exit(-4);
     }
+    if(!connect_para_server(&sock_client_para,&server_address_para)){
+        int sockets_to_shutdown[] = {sockfd,dialogue_socket,sock_client_para,sock_client_vehicule};
+        shutdown_proxy_server(sockets_to_shutdown,4);
+        exit(-5);
+    }
     
-    int exit_status = run_proxy_server(&dialogue_socket, &sock_client_para);
+    int exit_status = run_proxy_server(&dialogue_socket, &sock_client_para,&sock_client_vehicule,&server_address_vehicule);
 
-    int sockets_to_shutdown[] = {sockfd,dialogue_socket,sock_client_para};
-    shutdown_proxy_server(sockets_to_shutdown,3);
+    int sockets_to_shutdown[] = {sockfd,dialogue_socket,sock_client_para,sock_client_vehicule};
+    shutdown_proxy_server(sockets_to_shutdown,4);
 
     return exit_status; 
 }

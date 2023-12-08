@@ -1,25 +1,3 @@
-/*
-	Matière: Systèmes et Applications Répartis (SAR)                                 
-	Faculté: FST
-    Section: IF4
-    A.U: 2014/2015
-
-	Série n°1 (Sockets): 
-	Exercice 1
-    Une application mettant en œuvre 2 machines différentes 
-    (serveur et client) qui consiste à ce que le serveur fasse 
-    un écho du message envoyé par le client :
-
-	1. Ecrire les deux programmes ClientEcho.c et ServerEcho.c, 
-       sachant que l’adresse et le port du serveur et le message à
-       envoyer doivent être passés en ligne de commande.  
-
-	usage:	
-		Compilation: gcc ServeurEcho.c -o ServeurEcho
-		Exécution: ./ServeurEcho port
-
-	Thouraya Louati. 
-*/
 #include <stdio.h>      // pour printf() et fprintf()
 #include <sys/socket.h> // pour socket(), bind()
 #include <arpa/inet.h>  // pour htons et htonl
@@ -40,19 +18,11 @@ int  main(int argc, char * argv[])
    unsigned short ServPort;       // port du serveur
    int  countr;                   // count receive: longueur du message reçu
    
-   /*** Le port du serveur doit être passé en ligne de commande ***/
    if(argc < 2) {
 		fprintf(stderr, "Usage: %s port\n", argv[0]);
 		exit(1);
 	}
-   /*** Conversion du port du serveur d'une chaîne de caractères en nombres ***/
-   ServPort=atoi(argv[1]);
-   /* Création de socket */
-	/*** Description: socket() crée un point de communication, et renvoie un descripteur ***/
     sockfd = socket(AF_INET,SOCK_DGRAM,0); 
-    /*** 0  indique que l’on utilisera le protocole par défaut associé à SOCK_DGRAM soit  UDP  ***/
-	/*** Valeur renvoyée: Cet appel système renvoie un descripteur référençant la socket créée s’il réussit. 
-         S’il échoue, il renvoie -1 et perror affiche le message d'erreur ***/
     if(sockfd < 0)  /*** échec ? ***/
     { 
        perror("Probleme de creation de socket\n ");  /***  Affiche le message d ’erreur ***/  

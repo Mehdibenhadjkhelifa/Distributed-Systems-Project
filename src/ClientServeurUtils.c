@@ -15,7 +15,7 @@
 //Initialize server
 //return false if failed to init the server(proxy)
 //otherwiser returns true
-bool init_proxy_server(int* sockfd,sockaddr_in* ServAddr){
+bool init_proxy_server(int* sockfd,sockaddr_in* server_address){
     *sockfd = socket(AF_INET, SOCK_STREAM,0);  
     if(*sockfd < 0)  
     { 
@@ -23,11 +23,11 @@ bool init_proxy_server(int* sockfd,sockaddr_in* ServAddr){
         return false;
     } 
     printf("Proxy Server listening socket created with success\n");
-    memset(ServAddr, 0x00, sizeof(sockaddr_in)); 
-    ServAddr->sin_family = AF_INET; 
-    ServAddr->sin_port = htons(SERVER_PROXY_PORT); 
-    ServAddr->sin_addr.s_addr = htonl(INADDR_ANY);    
-    if((bind(*sockfd,(sockaddr *)ServAddr, sizeof(sockaddr_in))< 0)) 
+    memset(server_address, 0x00, sizeof(sockaddr_in)); 
+    server_address->sin_family = AF_INET; 
+    server_address->sin_port = htons(SERVER_PROXY_PORT); 
+    server_address->sin_addr.s_addr = htonl(INADDR_ANY);    
+    if((bind(*sockfd,(sockaddr *)server_address, sizeof(sockaddr_in))< 0)) 
     { 
         perror("bind failed"); 
         return false;
@@ -42,41 +42,41 @@ bool init_proxy_server(int* sockfd,sockaddr_in* ServAddr){
 }
 
 //initialize client to communicate with para server
-bool init_client_para(int* socket_client_para,sockaddr_in* server_address_para){
+bool init_client_vehicule(int* socket_client_para,sockaddr_in* server_address_vehicule){
     
     *socket_client_para = socket(AF_INET,SOCK_STREAM,0); 
     if(*socket_client_para< 0)  
     { 
-        perror("Failed to create client para socket");
-        return false;
-    } 
-    memset(server_address_para, 0x00, sizeof(sockaddr_in)); 
-    server_address_para->sin_family = AF_INET;
-    server_address_para->sin_port = htons(SERVER_TCP_PORT);
-    server_address_para->sin_addr.s_addr = inet_addr(SERVER_IP);
-    printf("Successfully created and initialized socket for para server\n");
-
-    return true;
-}
-bool init_client_vehicule(int *sock_client_vehicule, sockaddr_in *server_address_vehicule,hostent* vehicule_host){
-    *sock_client_vehicule= socket(AF_INET,SOCK_DGRAM,0); 
-    if(*sock_client_vehicule< 0)  
-    { 
         perror("Failed to create client vehicule socket");
         return false;
     } 
-    vehicule_host = gethostbyname(SERVER_IP);  
-    if(vehicule_host==NULL) {  
+    memset(server_address_vehicule, 0x00, sizeof(sockaddr_in)); 
+    server_address_vehicule->sin_family = AF_INET;
+    server_address_vehicule->sin_port = htons(SERVER_TCP_PORT);
+    server_address_vehicule->sin_addr.s_addr = inet_addr(SERVER_IP);
+    printf("Successfully created and initialized socket for vehicule server\n");
+
+    return true;
+}
+bool init_client_para(int *sock_client_para, sockaddr_in *server_address_para,hostent* para_host){
+    *sock_client_para= socket(AF_INET,SOCK_DGRAM,0); 
+    if(*sock_client_para< 0)  
+    { 
+        perror("Failed to create client para socket");
+        return false;
+    } 
+    para_host = gethostbyname(SERVER_IP);  
+    if(para_host==NULL) {  
         perror("gethostbyname failed");
         return false;
     }  
-    memset(server_address_vehicule, 0x00, sizeof(sockaddr_in)); 
-    server_address_vehicule->sin_family = (sa_family_t)vehicule_host->h_addrtype;
-    memcpy((char *) &server_address_vehicule->sin_addr.s_addr, vehicule_host->h_addr_list[0], (unsigned long)vehicule_host->h_length); 
-    server_address_vehicule->sin_port = htons(SERVER_UDP_PORT);
-    memset(&server_address_vehicule->sin_zero,0,8);      
-    server_address_vehicule->sin_addr.s_addr = inet_addr(SERVER_IP);
-    printf("Successfully created and initialized socket for vehicule server\n");
+    memset(server_address_para, 0x00, sizeof(sockaddr_in)); 
+    server_address_para->sin_family = (sa_family_t)para_host->h_addrtype;
+    memcpy((char *) &server_address_para->sin_addr.s_addr, para_host->h_addr_list[0], (unsigned long)para_host->h_length); 
+    server_address_para->sin_port = htons(SERVER_UDP_PORT);
+    memset(&server_address_para->sin_zero,0,8);      
+    server_address_para->sin_addr.s_addr = inet_addr(SERVER_IP);
+    printf("Successfully created and initialized socket for para server\n");
     return true;
 }
 //establish client proxy connection
@@ -92,17 +92,17 @@ bool connect_client(int* sockfd,int* dialogue_socket,sockaddr* client_addr,sockl
     printf("Connected with client\n");
     return true;
 }
-bool connect_para_server(int* sock_client_para,sockaddr_in* server_address_para){
-    printf("Connecting to Para Server\n");
-    while (connect(*sock_client_para,(sockaddr *)server_address_para,sizeof(*server_address_para)) == -1) sleep(1);
-    printf("Connected to Para Server successfully\n");
+bool connect_vehicule_server(int* sock_client_vehicule,sockaddr_in* server_address_vehicule){
+    printf("Connecting to Vehicule Server\n");
+    while (connect(*sock_client_vehicule,(sockaddr *)server_address_vehicule,sizeof(*server_address_vehicule)) == -1) sleep(1);
+    printf("Connected to vehicule Server successfully\n");
     return true;
 }
-int run_proxy_server(int* dialogue_socket,int* sock_client_para,int* sock_client_vehicule,sockaddr_in* server_address_vehicule){
+int run_proxy_server(int* dialogue_socket,int* sock_client_vehicule,int* sock_client_para,sockaddr_in* server_address_para){
 
     char  Buffer = -1;               
     ssize_t countr;                  
-
+    socklen_t address_length = sizeof(sockaddr_in); 
     while(1)
     {   
         Buffer = -1;
@@ -121,13 +121,7 @@ int run_proxy_server(int* dialogue_socket,int* sock_client_para,int* sock_client
                     case PARAPHARMACEUTIQUE_CODE:
                         printf("Recue code PARA\n");
                         //TODO : communication avec server 1 pour traitement para
-                        send(*sock_client_para,&Buffer,sizeof(char),0);
-                        printf("Message sent with success\n");
-                        break;
-                    case VEHICULE_CODE:
-                        printf("Recue code VEHICULE\n");
-                        //TODO : communication avec server 2 pour traitement Vehicule 
-                        ssize_t counts = sendto(*sock_client_vehicule, &Buffer,sizeof(char),0,(sockaddr *)server_address_vehicule,sizeof(*server_address_vehicule));
+                        ssize_t counts = sendto(*sock_client_para, &Buffer,sizeof(char),0,(sockaddr *)server_address_para,address_length);
                         switch(counts) 
                         { 
                             case -1:
@@ -139,9 +133,22 @@ int run_proxy_server(int* dialogue_socket,int* sock_client_para,int* sock_client
                             default : 
                                 if(counts != 1) 
                                     fprintf(stderr, "An error has occured while sending data!\n\n"); 
-                                else 
+                                else{
+                                    char received_buffer[MAX_BUFFER_LENGTH];
+                                    memset(received_buffer,0x00,MAX_BUFFER_LENGTH);
                                     printf("Message: %d sent successfully (%zd octets)\n\n", Buffer, counts); 
+                                    printf("waiting for response\n");
+                                    recvfrom(*sock_client_para,received_buffer,MAX_BUFFER_LENGTH,0,(sockaddr*)server_address_para,&address_length);
+                                    printf("received buffer : \n %s \n",received_buffer);
+                                    send(*dialogue_socket,received_buffer,strlen(received_buffer) + 1,0);
+                                } 
                         } 
+                        break;
+                    case VEHICULE_CODE:
+                        printf("Recue code VEHICULE\n");
+                        //TODO : communication avec server 2 pour traitement Vehicule 
+                        send(*sock_client_vehicule,&Buffer,sizeof(char),0);
+                        printf("Message sent with success\n");
                         break;
                     case RECETTE_GLOBALE_CODE:
                         printf("Recue code RECETTE\n");

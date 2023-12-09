@@ -1,29 +1,33 @@
 #include <stdio.h>  
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 #include <sys/socket.h> // pour socket(), bind()
 #include <arpa/inet.h>  // pour htons et htonl
 #include <unistd.h>     // pour close()  
 #include <netinet/in.h> // pour struct sockaddr_in
-#define SERVER_TCP_PORT 8081
+#define SERVER_TCP_PORT 8082
+bool get_file_content(const char* file_path,char* buffer,size_t* buffer_size);
 int  main(int argc, char* argv[]) 
 {
     int  sockfd;                      
     struct sockaddr_in ServAddr;     
     struct sockaddr_in ClientAddr;    
     socklen_t   longueurAdresse; 
-    char  Buffer = -1;               
+    char  received_buffer = -1;               
+    char* buffer_to_send = NULL;
+    size_t buffer_size;
     ssize_t countr;                  
-    int  socketDialogue;            
+    int  dialogue_socket;            
     sockfd = socket(AF_INET, SOCK_STREAM,0);  
     
     if(sockfd < 0)  
     { 
-        perror("Failed to create Para server listen socket");
+        perror("Failed to create vehicule server listen socket");
         exit(-1);   
     } 
     
-    printf("TCP Para Server listening socket created with success\n");
+    printf("TCP vehicule Server listening socket created with success\n");
     longueurAdresse = sizeof(struct sockaddr_in); 
     memset(&ServAddr, 0x00, longueurAdresse); 
     ServAddr.sin_family = AF_INET; 
@@ -41,34 +45,36 @@ int  main(int argc, char* argv[])
         exit(-1); 
     } 
     printf("Waiting for proxy connection\n");
-    socketDialogue = accept(sockfd,(struct sockaddr *)&ClientAddr, &longueurAdresse); 
-    if (socketDialogue <0) 
+    dialogue_socket = accept(sockfd,(struct sockaddr *)&ClientAddr, &longueurAdresse); 
+    if (dialogue_socket <0) 
     { 
         perror("accept"); 
-        close(socketDialogue); 
+        close(dialogue_socket); 
         //close(sockfd); 
         exit(-1); 
     } 
     printf("Connected with proxy\n");
     while(1)
     {   
-        Buffer = -1;
-        countr =  recv(socketDialogue, &Buffer,sizeof(char),0);  
+        received_buffer = -1;
+        countr =  recv(dialogue_socket, &received_buffer,sizeof(char),0);  
         switch(countr) 
         { 
             case -1:  
                 perror("recv"); 
-                close(socketDialogue); 
+                close(dialogue_socket); 
                 exit(-1); 
             case 0: 
                 fprintf(stderr,"Dialogue Socket closed by proxy\n\n"); 
-                close(socketDialogue); 
+                close(dialogue_socket); 
                 return  0; 
             default:  
                 printf("Message recue \n");
+                //send(dialogue_socket,buffer_to_send,buffer_size,0);
         }     
     }
-    close(socketDialogue);  
+    close(dialogue_socket);  
     close(sockfd); 
     return 0; 
 } 
+

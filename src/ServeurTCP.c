@@ -15,8 +15,8 @@ int  main(int argc, char* argv[])
     struct sockaddr_in ClientAddr;    
     socklen_t   longueurAdresse; 
     char  received_buffer = -1;               
-    char* buffer_to_send = NULL;
-    size_t buffer_size;
+    char* buffer_to_send = "ok from tcp";
+    size_t buffer_size = 12;
     ssize_t countr;                  
     int  dialogue_socket;            
     sockfd = socket(AF_INET, SOCK_STREAM,0);  
@@ -70,7 +70,7 @@ int  main(int argc, char* argv[])
                 return  0; 
             default:  
                 printf("Message recue \n");
-                //send(dialogue_socket,buffer_to_send,buffer_size,0);
+                send(dialogue_socket,buffer_to_send,buffer_size,0);
         }     
     }
     close(dialogue_socket);  

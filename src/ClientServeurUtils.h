@@ -24,5 +24,7 @@ bool init_client_para(int* sock_client_para,sockaddr_in* server_address_para,hos
 bool connect_client(int* sockfd,int* socketDialogue,sockaddr* ClientAddr,socklen_t* longueurAdresse);
 bool connect_vehicule_server(int* sock_client_vehicule,sockaddr_in* server_address_vehicule);
 int run_proxy_server(int* dialogue_socket,int* sock_client_vehicule,int* sock_client_para,sockaddr_in* server_address_para);
+bool get_para_invoices(int* sock_client_para,sockaddr_in* server_address_para,socklen_t address_length,char* received_buffer);
+bool get_vehicule_invoices(int* sock_client_vehicule,char* received_buffer);
 void shutdown_proxy_server(int* sockets,size_t n);
 #endif

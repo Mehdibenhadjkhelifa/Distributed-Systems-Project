@@ -121,38 +121,27 @@ int run_proxy_server(int* dialogue_socket,int* sock_client_vehicule,int* sock_cl
                     case PARAPHARMACEUTIQUE_CODE:
                         printf("Recue code PARA\n");
                         //TODO : communication avec server 1 pour traitement para
-                        ssize_t counts = sendto(*sock_client_para, &Buffer,sizeof(char),0,(sockaddr *)server_address_para,address_length);
-                        switch(counts) 
-                        { 
-                            case -1:
-                                perror("sendto failed"); 
-                                return -7;
-                            case 0: 
-                                fprintf(stderr, "No data has been sent!n\n"); 
-                                return 0; 
-                            default : 
-                                if(counts != 1) 
-                                    fprintf(stderr, "An error has occured while sending data!\n\n"); 
-                                else{
-                                    char received_buffer[MAX_BUFFER_LENGTH];
-                                    memset(received_buffer,0x00,MAX_BUFFER_LENGTH);
-                                    printf("Message: %d sent successfully (%zd octets)\n\n", Buffer, counts); 
-                                    printf("waiting for response\n");
-                                    recvfrom(*sock_client_para,received_buffer,MAX_BUFFER_LENGTH,0,(sockaddr*)server_address_para,&address_length);
-                                    printf("received buffer : \n %s \n",received_buffer);
-                                    send(*dialogue_socket,received_buffer,strlen(received_buffer) + 1,0);
-                                } 
-                        } 
+                        char received_buffer_para[MAX_BUFFER_LENGTH];
+                        memset(received_buffer_para,0x00,MAX_BUFFER_LENGTH);
+                        if(!get_para_invoices(sock_client_para,server_address_para,address_length,received_buffer_para))
+                            return -7;
+                        send(*dialogue_socket,received_buffer_para,strlen(received_buffer_para) + 1,0);
                         break;
                     case VEHICULE_CODE:
                         printf("Recue code VEHICULE\n");
                         //TODO : communication avec server 2 pour traitement Vehicule 
-                        send(*sock_client_vehicule,&Buffer,sizeof(char),0);
                         printf("Message sent with success\n");
+                        char received_buffer_vehicule[MAX_BUFFER_LENGTH];
+                        memset(received_buffer_vehicule,0x00,MAX_BUFFER_LENGTH);
+                        if(!get_vehicule_invoices(sock_client_vehicule,received_buffer_vehicule))
+                            return -8;
+                        send(*dialogue_socket,received_buffer_vehicule,strlen(received_buffer_vehicule) + 1,0);
                         break;
                     case RECETTE_GLOBALE_CODE:
                         printf("Recue code RECETTE\n");
                         //TODO : communication avec les deux server pour calcule de recette 
+                        char result_buffer[20] = "result of the sum"; 
+                        send(*dialogue_socket,result_buffer,strlen(result_buffer) + 1,0);
                         break;
                     default:
                         perror("Error in the received buffer from client");
@@ -162,6 +151,56 @@ int run_proxy_server(int* dialogue_socket,int* sock_client_vehicule,int* sock_cl
         }     
     }
     return 0;
+}
+bool get_para_invoices(int* sock_client_para,sockaddr_in* server_address_para,socklen_t address_length,char* received_buffer){
+    char buf = PARAPHARMACEUTIQUE_CODE;
+    ssize_t counts = sendto(*sock_client_para,&buf,sizeof(char),0,(sockaddr *)server_address_para,address_length);
+    switch(counts) 
+    { 
+        case -1:
+            perror("sendto failed"); 
+            return false;
+        case 0: 
+            fprintf(stderr, "No data has been sent!n\n"); 
+            return false; 
+        default : 
+            if(counts != 1){ 
+                fprintf(stderr, "An error has occured while sending data!\n\n"); 
+                return false;
+            }
+            else{
+                printf("Message: %d sent successfully (%zd octets)\n\n", buf, counts); 
+                printf("waiting for response\n");
+                recvfrom(*sock_client_para,received_buffer,MAX_BUFFER_LENGTH,0,(sockaddr*)server_address_para,&address_length);
+                printf("received buffer : \n %s \n",received_buffer);
+            } 
+    } 
+    return true;
+}
+bool get_vehicule_invoices(int* sock_client_vehicule, char* received_buffer){
+    char buf = VEHICULE_CODE;
+    ssize_t counts = send(*sock_client_vehicule,&buf,sizeof(char),0);
+    switch(counts) 
+    { 
+        case -1:
+            perror("sendto failed"); 
+            return false;
+        case 0: 
+            fprintf(stderr, "No data has been sent!n\n"); 
+            return false; 
+        default : 
+            if(counts != 1){ 
+                fprintf(stderr, "An error has occured while sending data!\n\n"); 
+                return false;
+            }
+            else{
+                printf("Message: %d sent successfully (%zd octets)\n\n", buf, counts); 
+                printf("waiting for response\n");
+                recv(*sock_client_vehicule,received_buffer,MAX_BUFFER_LENGTH,0);
+                printf("received buffer : \n %s \n",received_buffer);
+            } 
+    } 
+    return true;
 }
 void shutdown_proxy_server(int* sockets,size_t n){
     printf("Shutting down the proxy server\n");

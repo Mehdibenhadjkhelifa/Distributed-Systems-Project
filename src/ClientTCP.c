@@ -1,4 +1,5 @@
 #include <stdio.h> 
+#include <string.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h> 
@@ -7,6 +8,7 @@
 #include <netdb.h>
 #define SERVER_IP "127.0.0.1"
 #define SERVER_PORT 8080
+#define MAX_BUFFER_LENGTH 1024
 int main(int argc, char *argv[]) {
     int client_socket; 
     int8_t input;
@@ -42,6 +44,11 @@ int main(int argc, char *argv[]) {
         }
         else{
             send(client_socket,&input,sizeof(int8_t),0);
+
+            char received_buffer[MAX_BUFFER_LENGTH];
+            memset(received_buffer,0x00,MAX_BUFFER_LENGTH);
+            recv(client_socket,received_buffer,MAX_BUFFER_LENGTH,0);
+            printf("receive buffer from proxy: \n %s\n",received_buffer);
         }
         printf("================================\n");
     }

@@ -54,7 +54,6 @@ int  main(int argc, char * argv[])
                 if(!get_file_content("FacturePara.txt",buffer_to_send,&buffer_size))
                     exit(-2);
                 sendto(sockfd,buffer_to_send,buffer_size,0,(struct sockaddr*)&client_address,longueurAdresse);
-//                free(buffer_to_send);
         } 
     }
     free(buffer_to_send);
@@ -96,7 +95,6 @@ bool get_file_content(const char* file_path,char* buffer,size_t* buffer_size){
 
     // Null-terminate the buffer
     buffer[file_size] = '\0';
-    //printf("File Content: %s",buffer);
     // Close the file
     fclose(file);
     return true;

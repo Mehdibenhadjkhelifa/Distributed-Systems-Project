@@ -2,10 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-#include <sys/socket.h> // pour socket(), bind()
-#include <arpa/inet.h>  // pour htons et htonl
-#include <unistd.h>     // pour close()  
-#include <netinet/in.h> // pour struct sockaddr_in
+#include <sys/socket.h> 
+#include <arpa/inet.h>  
+#include <unistd.h>       
+#include <netinet/in.h> 
 #define SERVER_TCP_PORT 8082
 bool get_file_content(const char* file_path,char* buffer,size_t* buffer_size);
 int  main(int argc, char* argv[]) 
@@ -50,7 +50,6 @@ int  main(int argc, char* argv[])
     { 
         perror("accept"); 
         close(dialogue_socket); 
-        //close(sockfd); 
         exit(-1); 
     } 
     printf("Connected with proxy\n");

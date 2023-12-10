@@ -1,28 +1,27 @@
-#include <stdio.h>      // pour printf() et fprintf()
+#include <stdio.h>      
 #include <stdbool.h>
-#include <sys/socket.h> // pour socket(), bind()
-#include <arpa/inet.h>  // pour htons et htonl
-#include <stdlib.h>     // pour atoi(), exit() 
-#include <string.h>     // pour memset(), strcpy()  
-#include <unistd.h>     // pour close()  
-#include <netinet/in.h> // pour struct sockaddr_in
+#include <sys/socket.h> 
+#include <arpa/inet.h>  
+#include <stdlib.h>    
+#include <string.h>      
+#include <unistd.h>       
+#include <netinet/in.h> 
 
 #define SERVER_UDP_PORT 8081
 bool get_file_content(const char* file_path,char* buffer,size_t* buffer_size);
 int  main(int argc, char * argv[]) 
 { 
-    int  sockfd;                   // descripteur de socket 
-    struct sockaddr_in server_address;   // @ du serveur
-    struct sockaddr_in client_address; // @ du client
+    int  sockfd;                   
+    struct sockaddr_in server_address;   
+    struct sockaddr_in client_address;
     unsigned int longueurAdresse = sizeof(struct   sockaddr_in); 
-    char  received_buffer;// received_buffer de réception
-    size_t buffer_size = 1;
+    char  received_buffer;    size_t buffer_size = 1;
     char* buffer_to_send = (char*)calloc(buffer_size,sizeof(char));
     sockfd = socket(AF_INET,SOCK_DGRAM,0); 
-    if(sockfd < 0)  /*** échec ? ***/
+    if(sockfd < 0)  
     { 
-        perror("Probleme de creation de socket\n ");  /***  Affiche le message d ’erreur ***/  
-        exit(-1);    /*** On sort en indiquant un code erreur ***/
+        perror("Probleme de creation de socket\n ");    
+        exit(-1);    
     } 
     printf("Socket creee avec succes!  (%d)\n",sockfd); 
     memset(&server_address, 0x00, longueurAdresse); 
@@ -48,7 +47,7 @@ int  main(int argc, char * argv[])
                 fprintf(stderr, "Aucune donnée n a été reçue!\n\n"); 
                 close(sockfd); 
                 return   0; 
-            default :  /***  réception   de  n octets   ***/
+            default :  
                 memset(buffer_to_send,0x00,buffer_size);
 //                printf("Message %d recu avec succes (%zd  octets)\n\n", received_buffer, countr); 
                 if(!get_file_content("FacturePara.txt",buffer_to_send,&buffer_size))
@@ -57,7 +56,7 @@ int  main(int argc, char * argv[])
         } 
     }
     free(buffer_to_send);
-    /* Fermeture de socket */
+    
     close(sockfd); 
 
    return   0; 
@@ -67,7 +66,7 @@ bool get_file_content(const char* file_path,char* buffer,size_t* buffer_size){
     size_t file_size;
 
     // Open the file in binary mode
-    file = fopen(file_path,"r");
+    file = fopen(file_path,"rb");
 
     if (file == NULL) {
         perror("Error opening file");

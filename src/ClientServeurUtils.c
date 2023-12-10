@@ -1,13 +1,13 @@
 //general utility headers
-#include <stdio.h>      // pour printf() et fprintf()
+#include <stdio.h>      
 #include <stdlib.h>
-#include <string.h>     // pour memset(), strcpy()  
+#include <string.h>       
 #include <stdbool.h>
 //socket specific headers
-#include <sys/socket.h> // pour socket(), bind()
-#include <arpa/inet.h>  // pour htons et htonl
-#include <unistd.h>     // pour close()  
-#include <netinet/in.h> // pour sockaddr_in
+#include <sys/socket.h> 
+#include <arpa/inet.h>  
+#include <unistd.h>       
+#include <netinet/in.h> 
 //My utily headers
 #include "ClientServeurUtils.h"
 #include "bits/sockaddr.h"
@@ -41,11 +41,11 @@ bool init_proxy_server(int* sockfd,sockaddr_in* server_address){
     return true;
 }
 
-//initialize client to communicate with para server
-bool init_client_vehicule(int* socket_client_para,sockaddr_in* server_address_vehicule){
+//initialize client to communicate with vehicule server
+bool init_client_vehicule(int* sock_client_vehicule,sockaddr_in* server_address_vehicule){
     
-    *socket_client_para = socket(AF_INET,SOCK_STREAM,0); 
-    if(*socket_client_para< 0)  
+    *sock_client_vehicule= socket(AF_INET,SOCK_STREAM,0); 
+    if(*sock_client_vehicule< 0)  
     { 
         perror("Failed to create client vehicule socket");
         return false;

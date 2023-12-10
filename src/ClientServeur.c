@@ -2,10 +2,10 @@
 #include <stdlib.h>
 #include <stdbool.h>
 //socket specific headers
-#include <sys/socket.h> // pour socket(), bind()
-#include <arpa/inet.h>  // pour htons et htonl
-#include <unistd.h>     // pour close()  
-#include <netinet/in.h> // pour sockaddr_in
+#include <sys/socket.h> 
+#include <arpa/inet.h>  
+#include <unistd.h>       
+#include <netinet/in.h> 
 //my utils headers
 #include "ClientServeurUtils.h"
 

@@ -139,9 +139,19 @@ int run_proxy_server(int* dialogue_socket,int* sock_client_vehicule,int* sock_cl
                         break;
                     case RECETTE_GLOBALE_CODE:
                         printf("Recue code RECETTE\n");
-                        //TODO : communication avec les deux server pour calcule de recette 
-                        char result_buffer[20] = "result of the sum"; 
-                        send(*dialogue_socket,result_buffer,strlen(result_buffer) + 1,0);
+                        double result_para = 0.0f;
+                        double result_vehicule = 0.0f;
+                        char result_buffer[20];
+
+                        sendto(*sock_client_para,&Buffer,sizeof(char),0,(sockaddr*)server_address_para,address_length);
+                        recvfrom(*sock_client_para,&result_para,sizeof(double),0,(sockaddr*)server_address_para,&address_length);
+                        printf("received data from para sum is %lf\n",result_para);
+                        //TODO : get sum from serv2 (vehicule) and add it to the para sum
+
+
+                        //
+                        gcvt(result_para + result_vehicule,10,result_buffer);
+                        send(*dialogue_socket,&result_buffer,20,0);
                         break;
                     default:
                         perror("Error in the received buffer from client");
@@ -165,14 +175,14 @@ bool get_para_invoices(int* sock_client_para,sockaddr_in* server_address_para,so
             return false; 
         default : 
             if(counts != 1){ 
-                fprintf(stderr, "An error has occured while sending data!\n\n"); 
+                fprintf(stderr, "An error has occured while sending data!\n"); 
                 return false;
             }
             else{
                 printf("Message: %d sent successfully (%zd octets)\n\n", buf, counts); 
                 printf("waiting for response\n");
                 recvfrom(*sock_client_para,received_buffer,MAX_BUFFER_LENGTH,0,(sockaddr*)server_address_para,&address_length);
-                printf("received buffer : \n %s \n",received_buffer);
+                printf("received buffer : \n%s \n",received_buffer);
             } 
     } 
     return true;
@@ -194,10 +204,10 @@ bool get_vehicule_invoices(int* sock_client_vehicule, char* received_buffer){
                 return false;
             }
             else{
-                printf("Message: %d sent successfully (%zd octets)\n\n", buf, counts); 
+                printf("Message: %d sent successfully (%zd octets)\n", buf, counts); 
                 printf("waiting for response\n");
                 recv(*sock_client_vehicule,received_buffer,MAX_BUFFER_LENGTH,0);
-                printf("received buffer : \n %s \n",received_buffer);
+                printf("received buffer : \n%s \n",received_buffer);
             } 
     } 
     return true;

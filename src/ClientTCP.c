@@ -48,7 +48,7 @@ int main(int argc, char *argv[]) {
             char received_buffer[MAX_BUFFER_LENGTH];
             memset(received_buffer,0x00,MAX_BUFFER_LENGTH);
             recv(client_socket,received_buffer,MAX_BUFFER_LENGTH,0);
-            printf("receive buffer from proxy: \n %s\n",received_buffer);
+            printf("receive buffer from proxy: \n%s\n",received_buffer);
         }
         printf("================================\n");
     }

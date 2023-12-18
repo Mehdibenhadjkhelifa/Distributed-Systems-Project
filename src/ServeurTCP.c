@@ -6,8 +6,47 @@
 #include <arpa/inet.h>  
 #include <unistd.h>       
 #include <netinet/in.h> 
-#define SERVER_TCP_PORT 8082
-bool get_file_content(const char* file_path,char* buffer,size_t* buffer_size);
+#include <stdio.h>
+#include <mysql/mysql.h>
+//#define SERVER_TCP_PORT 8082
+
+double montant() {
+    MYSQL *conn;
+    MYSQL_RES *result;
+    MYSQL_ROW row;
+
+    // Initialiser la connexion MySQL
+    conn = mysql_init(NULL);
+
+    // Établir une connexion à la base de données
+    if (mysql_real_connect(conn, "localhost", "root", "", "socketdb", 0, NULL, 0) == NULL) {
+        fprintf(stderr, "Erreur de connexion à la base de données : %s\n", mysql_error(conn));
+        return 1;
+    }
+
+    // Exécuter une requête SQL
+    if (mysql_query(conn, "SELECT * FROM facture")) {
+        fprintf(stderr, "Erreur lors de l'exécution de la requête : %s\n", mysql_error(conn));
+        return 1;
+    }
+
+    // Récupérer le résultat de la requête
+    result = mysql_store_result(conn);
+    double count=0;
+
+    // Afficher les données
+    while ((row = mysql_fetch_row(result)) != NULL) {
+        printf("Colonne 1 : %s, Colonne 2 : %s\n,Colonne 3 : %s\n", row[0], row[1],row[2]);
+        count+=atof(row[2]);
+        printf("count =%lf\n",count);
+         
+    }
+
+    // Libérer les ressources
+    mysql_free_result(result);
+    mysql_close(conn);
+    return count;
+}
 int  main(int argc, char* argv[]) 
 {
     int  sockfd;                      
@@ -31,7 +70,8 @@ int  main(int argc, char* argv[])
     longueurAdresse = sizeof(struct sockaddr_in); 
     memset(&ServAddr, 0x00, longueurAdresse); 
     ServAddr.sin_family = AF_INET; 
-    ServAddr.sin_port = htons(SERVER_TCP_PORT); 
+    //ServAddr.sin_port = htons(SERVER_TCP_PORT); 
+    ServAddr.sin_port = htons(5000); 
     ServAddr.sin_addr.s_addr = htonl(INADDR_ANY);    
     if((bind(sockfd, (struct  sockaddr *)&ServAddr, longueurAdresse))< 0) 
     { 
@@ -57,6 +97,7 @@ int  main(int argc, char* argv[])
     {   
         received_buffer = -1;
         countr =  recv(dialogue_socket, &received_buffer,sizeof(char),0);  
+        printf("le message reçu est %c\n",received_buffer);
         switch(countr) 
         { 
             case -1:  
@@ -68,12 +109,17 @@ int  main(int argc, char* argv[])
                 close(dialogue_socket); 
                 return  0; 
             default:  
-                printf("Message recue \n");
-                send(dialogue_socket,buffer_to_send,buffer_size,0);
+                
+                double montant_a_envoyer=montant();             
+                send(dialogue_socket,&montant_a_envoyer,sizeof(double),0);
+               printf("Message envoyé \n");
         }     
     }
     close(dialogue_socket);  
     close(sockfd); 
     return 0; 
 } 
+
+
+
 

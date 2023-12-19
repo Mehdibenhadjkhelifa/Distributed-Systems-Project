@@ -7,3 +7,13 @@ i've installed mysql server using
 --sudo service mysql restart
 -- gcc -o serveurTCP serveurTCP.c -lmysqlclient 
 --sudo ./serveurTCP //port de la socket:5000 (defini au niveau du code)
+
+
+
+Changed the connect in the database to use root as password.
+
+completed the vehicule server functionality to return a string of all the data in the database when the
+
+appropriate code of the client is sent and to finished adding the invoices of vehicule server to the para server
+
+so the client gets the total cost of both server invoices when they request it

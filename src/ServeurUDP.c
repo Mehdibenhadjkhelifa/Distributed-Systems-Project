@@ -9,7 +9,6 @@
 
 #define SERVER_UDP_PORT 8081
 #define FACTURE_CODE 1
-#define TOTAL_MONTANT_CODE 2
 bool get_file_content(const char* file_path,char* buffer,size_t* buffer_size);
 double get_total_cost(const char* file_path);
 int  main(int argc, char * argv[]) 

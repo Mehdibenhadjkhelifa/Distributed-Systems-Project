@@ -147,9 +147,8 @@ int run_proxy_server(int* dialogue_socket,int* sock_client_vehicule,int* sock_cl
                         recvfrom(*sock_client_para,&result_para,sizeof(double),0,(sockaddr*)server_address_para,&address_length);
                         printf("received data from para sum is %lf\n",result_para);
                         //TODO : get sum from serv2 (vehicule) and add it to the para sum
-
-
-                        //
+                        send(*sock_client_vehicule,&Buffer,sizeof(char),0);
+                        recv(*sock_client_vehicule,&result_vehicule,sizeof(double),0);
                         gcvt(result_para + result_vehicule,10,result_buffer);
                         send(*dialogue_socket,&result_buffer,20,0);
                         break;

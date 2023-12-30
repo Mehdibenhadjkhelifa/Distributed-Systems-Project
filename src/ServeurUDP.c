@@ -52,7 +52,8 @@ int  main(int argc, char * argv[])
                 return   0; 
             default :  
                 memset(buffer_to_send,0x00,buffer_size);
-                //                printf("Message %d recu avec succes (%zd  octets)\n\n", received_buffer, countr); 
+                //printf("Message %d recu avec succes (%zd  octets)\n\n", received_buffer, countr); 
+                printf("message received\n");
                 if(received_buffer == FACTURE_CODE){
                     if(!get_file_content("FacturePara.csv",buffer_to_send,&buffer_size))
                         exit(-2);
@@ -60,9 +61,10 @@ int  main(int argc, char * argv[])
                 }
                 else{
                     double sum = get_total_cost("FacturePara.csv"); 
-                    printf("sum calculated is %lf\n",sum);
+                    printf("sum calculated in para %lf\n",sum);
                     sendto(sockfd,&sum,sizeof(double) ,0,(struct sockaddr*)&client_address,longueurAdresse);
                 }
+                printf("message sent\n\n");
         } 
     }
     free(buffer_to_send);
@@ -87,7 +89,7 @@ bool get_file_content(const char* file_path,char* buffer,size_t* buffer_size){
     fseek(file, 0, SEEK_END);
     file_size = (size_t)ftell(file);
     rewind(file);
-    printf("the file_size is %zu\n",file_size);
+    //printf("the file_size is %zu\n",file_size);
 
     if(file_size + 1 > *buffer_size){
         void* temp =realloc(buffer,file_size + 1); // +1 for the null terminator
@@ -125,12 +127,12 @@ double get_total_cost(const char* file_path){
         char client_name[50];
         double cost = 0.0f;
 
-        printf("Retrieved line of length %zu:\n", read);
-        printf("%s", line);
+        //printf("Retrieved line of length %zu:\n", read);
+        //printf("%s", line);
         //sscanf(line,"%s-%s-%s",code,client_name,cost);
 
         sscanf(line, "%8[^,],%49[^,],%lf", code, client_name,&cost);
-        printf("code est : %s , nom de client est %s , le montant est %lf\n",code,client_name,cost);
+        //printf("code est : %s , nom de client est %s , le montant est %lf\n",code,client_name,cost);
         result += cost;
     }
 

@@ -49,21 +49,20 @@ void* montant(int code) {
             memset(result_str,0x00,50);
             sprintf(result_str,"%s    %s     %s\n",row[0],row[1],row[2]);
             //printf("%s\n",result_str);
-            printf("str length is : %lu\n",strlen(result_str));
-            printf("Str size before change : %lu\n",str_size);
+            //printf("str length is : %lu\n",strlen(result_str));
+            //printf("Str size before change : %lu\n",str_size);
             str_size += strlen(result_str);
-            printf("Str size after change : %lu\n",str_size);
-            printf("the result before now is : %s",str_invoice);
+            //printf("Str size after change : %lu\n",str_size);
+            //printf("the result before now is : %s",str_invoice);
             str_invoice =(char*)realloc(str_invoice,(str_size * sizeof(char)) + 1);
             strcat(str_invoice,result_str);
             //get the last character of the string to append to it with null termination character
-            printf("the result after now is : %s",str_invoice);
+           // printf("the result after now is : %s",str_invoice);
         } 
         else{
             *total_cost+=atof(row[2]);
-            printf("count =%lf\n",*total_cost);
         }
-        printf("Colonne 1 : %s, Colonne 2 : %s,Colonne 3 : %s\n", row[0], row[1],row[2]);
+        //printf("Colonne 1 : %s, Colonne 2 : %s,Colonne 3 : %s\n", row[0], row[1],row[2]);
 
     }
 
@@ -121,7 +120,7 @@ int  main(int argc, char* argv[])
     {   
         received_buffer = -1;
         countr =  recv(dialogue_socket, &received_buffer,sizeof(char),0);  
-        printf("le message reçu est %c\n",received_buffer);
+        printf("message received\n");
         switch(countr) 
         { 
             case -1:  
@@ -140,10 +139,11 @@ int  main(int argc, char* argv[])
                }
                else{
                 double* montant_a_envoyer=(double*)montant(received_buffer);             
+                printf("Sum of vehicule invoices: %f\n",*montant_a_envoyer);
                 send(dialogue_socket,montant_a_envoyer,sizeof(double),0);
                 free(montant_a_envoyer);
                }
-               printf("Message envoyé \n");
+               printf("Message sent\n\n");
         }     
     }
     close(dialogue_socket);  

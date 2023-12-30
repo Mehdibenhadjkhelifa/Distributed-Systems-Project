@@ -1,4 +1,4 @@
-INSERT INTO votre_table (nom, montant) VALUES ('nea karlson', 25500.500),
+INSERT INTO Invoices(nom, montant) VALUES ('nea karlson', 25500.500),
 ('kalie wise', 500.000),
 ('dwight fair', 10000.500),
 ('bob darwin', 2000.000),

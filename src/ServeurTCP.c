@@ -21,13 +21,13 @@ void* montant(int code) {
     conn = mysql_init(NULL);
 
     // Établir une connexion à la base de données
-    if (mysql_real_connect(conn, "localhost", "root", "root", "socketdb", 0, NULL, 0) == NULL) {
+    if (mysql_real_connect(conn, "localhost", "root", "root", "VehiculeDB", 0, NULL, 0) == NULL) {
         fprintf(stderr, "Erreur de connexion à la base de données : %s\n", mysql_error(conn));
         return NULL;
     }
 
     // Exécuter une requête SQL
-    if (mysql_query(conn, "SELECT * FROM votre_table")) {
+    if (mysql_query(conn, "SELECT * FROM Invoices")) {
         fprintf(stderr, "Erreur lors de l'exécution de la requête : %s\n", mysql_error(conn));
         return NULL;
     }

@@ -23,8 +23,8 @@ download the mysql library to staticly link it with the ``ServeurTCP`` binary
 ### 1- Clone Repository
 clone the repository locally and cd into it with the following commands:
 ```bash
-git clone https://github.com/Mehdibenhadjkhelifa/projet_sr.git
-cd projet_sr
+git clone https://github.com/Mehdibenhadjkhelifa/Distributed-Systems-Project.git
+cd Distributed-Systems-Project
 ```
 ### 2- download dependencies
 

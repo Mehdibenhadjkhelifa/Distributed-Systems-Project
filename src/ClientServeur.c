@@ -17,12 +17,12 @@ int  main(int argc, char* argv[])
     sockaddr_in server_addr;     
     sockaddr_in client_addr;    
 
-    //variables used to establish proxy to server_para(TCP) connection
+    //variables used to establish proxy to server_para(UDP) connection
     int  sock_client_para;
     sockaddr_in server_address_para;     
     hostent para_host;  
 
-    //variables used to establish proxy to server_vehicule(UDP) connection
+    //variables used to establish proxy to server_vehicule(TCP) connection
     int  sock_client_vehicule;
     sockaddr_in server_address_vehicule;     
 

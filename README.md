@@ -34,7 +34,7 @@ you need download all dependencies listed above
 
 if you are in a ubuntu system run:
 ```bash
-sudo ./ubuntuSetup.sh
+scripts/ubuntuSetup.sh
 ```
 
 ### 3- Setup MySql Database
@@ -43,9 +43,9 @@ sudo ./ubuntuSetup.sh
 
 #### b- Create a database named ``VehiculeDB`` with a table named ``Invoices``:
 
-Use the provided file named ``setup.sql`` entering the following command :
+Use the provided file in SqlHelpers named ``setup.sql`` entering the following command :
 ```bash
-mysql < setup.sql -u root -p
+mysql < SqlHelpers/setup.sql -u root -p
 ```
 when prompted for the password enter ``root`` as setup in step **a**
 
@@ -61,12 +61,12 @@ of the database and the table should match what is noted above.
 
 #### c- Add additional invoices data:
 
-You can use the ``data.sql`` file and modify it to add additional raws in the database .
+You can use the ``data.sql`` file provided in SqlHelpers and modify it to add additional raws in the database .
 
 After adding elements execute: 
 
 ```bash
-mysql < data.sql -u root -p
+mysql < SqlHelpers/data.sql -u root -p
 ```
 Same as last step enter ``root`` as your password.
 
@@ -78,7 +78,7 @@ you can add individual elements manually and *NOTE* to match the name of the tab
 ### 4- Build Binaries
 you can build the whole project with :
 ```bash
-./build.sh
+scripts/build.sh
 ```
 this will generate 4 binaries under the bin folder to use :
 

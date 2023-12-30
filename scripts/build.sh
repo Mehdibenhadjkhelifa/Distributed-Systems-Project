@@ -1,3 +1,7 @@
+if [ ! -d "./bin" ]
+then
+    mkdir bin
+fi
 gcc -o bin/ClientTCP src/ClientTCP.c 
 gcc -o bin/ClientServeur src/ClientServeur.c src/ClientServeurUtils.c
 gcc -o bin/ServeurUDP src/ServeurUDP.c 

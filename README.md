@@ -93,9 +93,11 @@ this will generate 4 binaries under the bin folder to use :
 
 **OR**
 
-you can compile the binaries with a compiler of your choice but note that 
+you can compile the binaries with a compiler of your choice but *note* that 
 
-the proxy have the following source files: ``ClientServeur.c`` ``ClientServeurUtils.c`` 
+the proxy have the following source files: ``ClientServeur.c`` ``ClientServeurUtils.c``
+
+And link the vehicule serveur ``ServeurTCP`` with *mysqlclient*.
 
 ## Executing the app
 

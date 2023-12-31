@@ -39,7 +39,17 @@ scripts/ubuntuSetup.sh
 
 ### 3- Setup MySql Database
 
-#### a- Setup a user named ``root`` with a password of ``root``
+#### a- Setup a user named ``root`` with a password of ``root``:
+
+this is achieved by the following comands:
+```bash
+sudo mysql
+-- for MySQL
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'root';
+
+-- for MariaDB
+ALTER USER 'root'@'localhost' IDENTIFIED VIA mysql_native_password USING PASSWORD('root');
+```
 
 #### b- Create a database named ``VehiculeDB`` with a table named ``Invoices``:
 
